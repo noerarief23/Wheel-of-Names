@@ -22,24 +22,50 @@ export default class WheelServer {
   }
 
   async onMessage(message, connection) {
-    const data = JSON.parse(message);
+    try {
+      const data = JSON.parse(message);
 
-    switch(data.type) {
-      case "join":
-        await this.handleJoin(data.name, connection);
-        break;
-      
-      case "start":
-        await this.handleStart(connection);
-        break;
-      
-      case "reset":
-        await this.handleReset(connection);
-        break;
+      switch(data.type) {
+        case "join":
+          await this.handleJoin(data.name, connection);
+          break;
+        
+        case "start":
+          await this.handleStart(connection);
+          break;
+        
+        case "reset":
+          await this.handleReset(connection);
+          break;
+      }
+    } catch (error) {
+      connection.send(JSON.stringify({
+        type: "error",
+        message: "Invalid message format"
+      }));
     }
   }
 
   async handleJoin(name, connection) {
+    // Validate name
+    if (!name || typeof name !== 'string') {
+      connection.send(JSON.stringify({
+        type: "error",
+        message: "Invalid name."
+      }));
+      return;
+    }
+
+    // Validate name length
+    const trimmedName = name.trim();
+    if (trimmedName.length === 0 || trimmedName.length > 50) {
+      connection.send(JSON.stringify({
+        type: "error",
+        message: "Name must be between 1 and 50 characters."
+      }));
+      return;
+    }
+
     // Don't allow joins if game is locked
     if (this.state.isLocked) {
       connection.send(JSON.stringify({
@@ -49,8 +75,17 @@ export default class WheelServer {
       return;
     }
 
+    // Check maximum participants
+    if (this.state.participants.length >= 100) {
+      connection.send(JSON.stringify({
+        type: "error",
+        message: "Maximum number of participants reached."
+      }));
+      return;
+    }
+
     // Check if name already exists
-    if (this.state.participants.some(p => p.name === name)) {
+    if (this.state.participants.some(p => p.name === trimmedName)) {
       connection.send(JSON.stringify({
         type: "error",
         message: "Name already exists. Please choose another."
@@ -60,7 +95,7 @@ export default class WheelServer {
 
     // Add participant
     this.state.participants.push({
-      name: name,
+      name: trimmedName,
       id: crypto.randomUUID()
     });
 

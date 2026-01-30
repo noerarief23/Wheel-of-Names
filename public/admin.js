@@ -18,8 +18,12 @@ function connect() {
     };
     
     ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        handleMessage(data);
+        try {
+            const data = JSON.parse(event.data);
+            handleMessage(data);
+        } catch (error) {
+            console.error('Error parsing message:', error);
+        }
     };
     
     ws.onerror = (error) => {
@@ -110,6 +114,10 @@ function updateMessage(message, isError = false) {
 
 // Start game
 document.getElementById('startButton').addEventListener('click', () => {
+    if (ws.readyState !== WebSocket.OPEN) {
+        updateMessage('Not connected to server', true);
+        return;
+    }
     ws.send(JSON.stringify({ type: 'start' }));
     updateMessage('Starting game...');
 });
@@ -117,6 +125,10 @@ document.getElementById('startButton').addEventListener('click', () => {
 // Reset game
 document.getElementById('resetButton').addEventListener('click', () => {
     if (confirm('Are you sure you want to reset the game? This will clear all participants.')) {
+        if (ws.readyState !== WebSocket.OPEN) {
+            updateMessage('Not connected to server', true);
+            return;
+        }
         ws.send(JSON.stringify({ type: 'reset' }));
         updateMessage('Game reset');
     }

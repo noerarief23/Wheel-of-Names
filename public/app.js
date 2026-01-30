@@ -31,8 +31,12 @@ function connect() {
     };
     
     ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        handleMessage(data);
+        try {
+            const data = JSON.parse(event.data);
+            handleMessage(data);
+        } catch (error) {
+            console.error('Error parsing message:', error);
+        }
     };
     
     ws.onerror = (error) => {
@@ -72,6 +76,12 @@ function updateState(state) {
     // Draw wheel
     drawWheel();
     
+    // If current user is in the participant list, show game section
+    if (currentUser && participants.some(p => p.name === currentUser)) {
+        document.getElementById('joinSection').classList.add('hidden');
+        document.getElementById('gameSection').classList.remove('hidden');
+    }
+    
     // Update status message
     if (state.isLocked) {
         document.getElementById('statusMessage').textContent = 
@@ -95,6 +105,12 @@ document.getElementById('joinForm').addEventListener('submit', (e) => {
     
     if (!name) return;
     
+    // Check WebSocket is ready
+    if (ws.readyState !== WebSocket.OPEN) {
+        showError('Not connected to server. Please wait...');
+        return;
+    }
+    
     currentUser = name;
     
     // Send join message
@@ -103,9 +119,8 @@ document.getElementById('joinForm').addEventListener('submit', (e) => {
         name: name
     }));
     
-    // Show game section
-    document.getElementById('joinSection').classList.add('hidden');
-    document.getElementById('gameSection').classList.remove('hidden');
+    // Show game section only after successful join
+    // (will be handled by state update from server)
 });
 
 // Update participant list
