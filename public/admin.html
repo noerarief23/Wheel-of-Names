@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheel of Names - Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎡 Wheel of Names - Admin</h1>
+        
+        <div class="admin-section">
+            <h2>Game Controls</h2>
+            <div class="admin-controls">
+                <button id="startButton" class="btn-primary">Start Game</button>
+                <button id="resetButton" class="btn-danger">Reset Game</button>
+            </div>
+            <p id="adminMessage" class="status-message"></p>
+        </div>
+
+        <div class="game-state">
+            <h3>Game Status</h3>
+            <p><strong>Status:</strong> <span id="gameStatus">Waiting</span></p>
+            <p><strong>Entries:</strong> <span id="entriesStatus">Open</span></p>
+            <p><strong>Winner:</strong> <span id="currentWinner">None</span></p>
+        </div>
+
+        <!-- Participants List -->
+        <div class="participants">
+            <h3>Participants (<span id="participantCount">0</span>)</h3>
+            <ul id="participantList"></ul>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

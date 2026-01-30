@@ -1,0 +1,17 @@
+{
+  "name": "wheel-of-names",
+  "version": "1.0.0",
+  "description": "Real-time Wheel of Names doorprize game using PartyKit",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "partykit dev",
+    "build": "partykit build",
+    "deploy": "partykit deploy"
+  },
+  "keywords": ["partykit", "wheel", "game", "realtime"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "partykit": "^0.0.111"
+  }
+}
