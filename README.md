@@ -82,11 +82,28 @@ Wheel-of-Names/
 
 ## Deployment
 
-Deploy to PartyKit cloud:
+### Deploy to PartyKit Cloud
+
+Deploy the full real-time application to PartyKit:
 
 ```bash
 npm run deploy
 ```
+
+### Deploy to GitHub Pages
+
+The repository includes a GitHub Actions workflow that automatically deploys the static files to GitHub Pages when you push to the `main` branch.
+
+**Setup Instructions:**
+
+1. Go to your repository Settings → Pages
+2. Under "Build and deployment", select "GitHub Actions" as the source
+3. Push your changes to the `main` branch
+4. The workflow will automatically build and deploy your site
+
+**Note:** GitHub Pages deployment serves the static HTML/CSS/JS files. For full real-time functionality with WebSockets, you'll need to deploy the PartyKit server separately and update the WebSocket URLs in the client code to point to your PartyKit deployment.
+
+Alternatively, you can run the complete application with PartyKit locally or deploy it to PartyKit cloud for full real-time features.
 
 ## License
 
