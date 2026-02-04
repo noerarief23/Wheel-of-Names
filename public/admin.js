@@ -1,6 +1,9 @@
 // WebSocket connection to PartyKit
 let ws;
 let participants = [];
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 10;
+const BASE_RECONNECT_DELAY = 1000; // 1 second
 
 // Connect to PartyKit server
 function connect() {
@@ -15,6 +18,7 @@ function connect() {
     ws.onopen = () => {
         console.log('Connected to server');
         updateMessage('Connected to server');
+        reconnectAttempts = 0; // Reset reconnect attempts on successful connection
     };
     
     ws.onmessage = (event) => {
@@ -33,8 +37,15 @@ function connect() {
     
     ws.onclose = () => {
         console.log('Disconnected from server');
-        updateMessage('Disconnected. Reconnecting...');
-        setTimeout(connect, 3000); // Reconnect after 3 seconds
+        
+        if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+            const delay = BASE_RECONNECT_DELAY * Math.pow(2, reconnectAttempts);
+            updateMessage(`Disconnected. Reconnecting in ${delay / 1000}s...`);
+            reconnectAttempts++;
+            setTimeout(connect, delay);
+        } else {
+            updateMessage('Max reconnection attempts reached. Please refresh the page.', true);
+        }
     };
 }
 
@@ -46,7 +57,8 @@ function handleMessage(data) {
             break;
         
         case 'winner':
-            updateState({ ...data, gameStarted: true, isLocked: true });
+            // Preserve existing participants when updating state for a winner message
+            updateState({ ...data, participants, gameStarted: true, isLocked: true, winner: data.winner });
             updateMessage(`Winner selected: ${data.winner.name}!`);
             break;
         

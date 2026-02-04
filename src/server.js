@@ -25,6 +25,14 @@ export default class WheelServer {
     try {
       const data = JSON.parse(message);
 
+      if (typeof data !== "object" || data === null || typeof data.type !== "string") {
+        connection.send(JSON.stringify({
+          type: "error",
+          message: "Missing or invalid message type"
+        }));
+        return;
+      }
+
       switch(data.type) {
         case "join":
           await this.handleJoin(data.name, connection);
@@ -36,6 +44,13 @@ export default class WheelServer {
         
         case "reset":
           await this.handleReset(connection);
+          break;
+
+        default:
+          connection.send(JSON.stringify({
+            type: "error",
+            message: `Unknown message type: ${String(data.type)}`
+          }));
           break;
       }
     } catch (error) {

@@ -3,13 +3,15 @@ let ws;
 let currentUser = null;
 let participants = [];
 let isAnimating = false;
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 10;
+const BASE_RECONNECT_DELAY = 1000; // 1 second
 
 // Canvas and wheel variables
 const canvas = document.getElementById('wheelCanvas');
 const ctx = canvas.getContext('2d');
 let rotation = 0;
 let targetRotation = 0;
-let isSpinning = false;
 
 const COLORS = [
     '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
@@ -28,6 +30,7 @@ function connect() {
     
     ws.onopen = () => {
         console.log('Connected to server');
+        reconnectAttempts = 0; // Reset reconnect attempts on successful connection
     };
     
     ws.onmessage = (event) => {
@@ -45,7 +48,16 @@ function connect() {
     
     ws.onclose = () => {
         console.log('Disconnected from server');
-        setTimeout(connect, 3000); // Reconnect after 3 seconds
+        
+        if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+            const delay = BASE_RECONNECT_DELAY * Math.pow(2, reconnectAttempts);
+            console.log(`Reconnecting in ${delay}ms (attempt ${reconnectAttempts + 1}/${MAX_RECONNECT_ATTEMPTS})`);
+            reconnectAttempts++;
+            setTimeout(connect, delay);
+        } else {
+            console.error('Max reconnection attempts reached. Please refresh the page.');
+            showError('Connection lost. Please refresh the page.');
+        }
     };
 }
 
@@ -91,11 +103,11 @@ function updateState(state) {
             'Waiting for game to start...';
     }
     
-    // Show winner if exists
-    if (state.winner) {
-        document.getElementById('winnerSection').classList.remove('hidden');
-        document.getElementById('winnerName').textContent = state.winner.name;
-    }
+    // Winner display is handled via the dedicated 'winner' message
+    // (see handleMessage → showWinner), which ensures the wheel
+    // animation completes before revealing the winner. Do not show
+    // the winner directly from state updates to avoid bypassing
+    // the animation for late-joining or reconnecting users.
 }
 
 // Join the game
@@ -111,13 +123,15 @@ document.getElementById('joinForm').addEventListener('submit', (e) => {
         return;
     }
     
-    currentUser = name;
-    
-    // Send join message
+    // Send join message - don't set currentUser yet
+    // It will be set after server confirms via state update
     ws.send(JSON.stringify({
         type: 'join',
         name: name
     }));
+    
+    // Temporarily store the name to check for join confirmation
+    currentUser = name;
     
     // Show game section only after successful join
     // (will be handled by state update from server)
@@ -175,10 +189,35 @@ function drawWheel() {
         ctx.rotate(startAngle + sliceAngle / 2);
         ctx.textAlign = 'right';
         ctx.fillStyle = 'white';
-        ctx.font = 'bold 16px Arial';
+        
+        // Dynamically adjust font size and truncate long names to fit
+        const baseFontSize = 16;
+        const minFontSize = 10;
+        const maxTextWidth = radius - 60; // keep text away from center
+        let fontSize = baseFontSize;
+        let text = participant.name;
+
+        ctx.font = 'bold ' + fontSize + 'px Arial';
+
+        // Reduce font size until text fits or minimum size reached
+        while (fontSize > minFontSize && ctx.measureText(text).width > maxTextWidth) {
+            fontSize -= 1;
+            ctx.font = 'bold ' + fontSize + 'px Arial';
+        }
+
+        // If still too wide, truncate and add ellipsis
+        if (ctx.measureText(text).width > maxTextWidth) {
+            const ellipsis = '…';
+            let truncated = text;
+            while (truncated.length > 0 && ctx.measureText(truncated + ellipsis).width > maxTextWidth) {
+                truncated = truncated.slice(0, -1);
+            }
+            text = truncated + ellipsis;
+        }
+
         ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
         ctx.shadowBlur = 3;
-        ctx.fillText(participant.name, radius - 20, 5);
+        ctx.fillText(text, radius - 20, 5);
         ctx.restore();
     });
     
