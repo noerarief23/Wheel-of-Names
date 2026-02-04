@@ -1,0 +1,259 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+h2 {
+    color: #555;
+    margin-bottom: 20px;
+}
+
+h3 {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.section {
+    margin-bottom: 30px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Join Form */
+#joinForm {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#nameInput {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+#nameInput:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+button {
+    padding: 12px 30px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #5568d3;
+}
+
+button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.error {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Status */
+.status {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#statusMessage {
+    font-size: 18px;
+    color: #555;
+    font-weight: 500;
+}
+
+/* Wheel */
+.wheel-container {
+    position: relative;
+    width: 500px;
+    height: 500px;
+    margin: 0 auto 30px;
+}
+
+.wheel-pointer {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    color: #e74c3c;
+    z-index: 10;
+}
+
+#wheelCanvas {
+    display: block;
+    margin: 0 auto;
+    border-radius: 50%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Winner Section */
+#winnerSection {
+    text-align: center;
+    margin: 30px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 15px;
+    animation: celebration 0.5s ease-in-out;
+}
+
+@keyframes celebration {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.winner-name {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    margin-top: 10px;
+}
+
+/* Participants List */
+.participants {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#participantList {
+    list-style: none;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#participantList li {
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Admin Styles */
+.admin-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.admin-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.btn-primary {
+    background: #28a745;
+}
+
+.btn-primary:hover {
+    background: #218838;
+}
+
+.btn-danger {
+    background: #dc3545;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+.status-message {
+    font-size: 14px;
+    color: #555;
+    margin-top: 10px;
+}
+
+.game-state {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.game-state p {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.game-state strong {
+    color: #333;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .wheel-container {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+    }
+
+    #wheelCanvas {
+        width: 100%;
+        height: auto;
+        max-width: 100%;
+    }
+
+    #joinForm {
+        flex-direction: column;
+    }
+
+    .admin-controls {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheel of Names - Player</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎡 Wheel of Names</h1>
+        
+        <!-- Join Form -->
+        <div id="joinSection" class="section">
+            <h2>Join the Game</h2>
+            <form id="joinForm">
+                <input type="text" id="nameInput" placeholder="Enter your name" maxlength="50" required>
+                <button type="submit">Join</button>
+            </form>
+            <p id="errorMessage" class="error"></p>
+        </div>
+
+        <!-- Game Section -->
+        <div id="gameSection" class="section hidden">
+            <div class="status">
+                <p id="statusMessage">Waiting for game to start...</p>
+            </div>
+
+            <!-- Wheel Container -->
+            <div class="wheel-container">
+                <canvas id="wheelCanvas" width="500" height="500"></canvas>
+                <div class="wheel-pointer">▼</div>
+            </div>
+
+            <!-- Winner Display -->
+            <div id="winnerSection" class="hidden">
+                <h2>🎉 Winner! 🎉</h2>
+                <p id="winnerName" class="winner-name"></p>
+            </div>
+
+            <!-- Participants List -->
+            <div class="participants">
+                <h3>Participants (<span id="participantCount">0</span>)</h3>
+                <ul id="participantList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

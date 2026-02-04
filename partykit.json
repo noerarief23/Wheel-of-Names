@@ -1,0 +1,5 @@
+{
+  "name": "wheel-of-names",
+  "main": "src/server.js",
+  "serve": "public"
+}
